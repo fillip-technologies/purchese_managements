@@ -2,10 +2,8 @@
 @section('title', 'Dashboard')
 @section('content')
 
-<!-- Stats Cards -->
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
 
-    <!-- Card -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
     <div class="bg-white/80 backdrop-blur rounded-2xl shadow-sm hover:shadow-lg p-6 border border-gray-100 transition-all duration-300 group">
         <div class="flex justify-between items-center">
             <div>
