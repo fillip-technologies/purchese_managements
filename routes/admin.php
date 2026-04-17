@@ -3,7 +3,7 @@
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('admin')->middleware(['admin'])->group(function () {
+Route::prefix('admin')->middleware('admin')->group(function () {
     Route::get('/add/vendors', [HomeController::class, 'vendors'])->name('add.vendors');
     Route::get('/add/clients', [HomeController::class, 'clients'])->name('add.clients');
     Route::get('/add/product', [HomeController::class, 'add_product'])->name('add.addproduct');
@@ -18,3 +18,5 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     })->name('settings');
 
 });
+
+
