@@ -8,7 +8,7 @@
 
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -68,12 +68,13 @@
                 <i class="fas fa-user text-gray-500"></i>
             </div>
             <div class="flex-1">
-                <p class="text-sm font-medium text-gray-700">Admin</p>
+                <p class="text-sm font-medium text-gray-700">{{ Auth::guard('admin')->user() ? "Admin" : Auth::guard('user')->user()->full_name }}</p>
                 <p class="text-xs text-gray-400 truncate">
-                    {{ Auth::user()->email ?? "" }}
+                    {{ Auth::guard('admin')->user()->email ?? Auth::guard('user')->user()->email }}
                 </p>
             </div>
-            <a href="{{ route('admin.logout') }}" class="text-gray-400 hover:text-red-500">
+
+            <a href="{{ Auth::guard('admin')->user() ?  route('admin.logout') : route('user.logout') }}" class="text-gray-400 hover:text-red-500">
                 <i class="fas fa-sign-out-alt"></i>
             </a>
         </div>
