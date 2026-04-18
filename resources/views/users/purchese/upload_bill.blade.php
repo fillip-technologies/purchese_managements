@@ -50,9 +50,9 @@
             <!-- LEFT: FORM -->
             <div class="col-span-1 lg:col-span-2 bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-100">
 
-                <h2 class="text-lg font-semibold mb-4 text-gray-700">Create Request</h2>
+                <h2 class="text-lg font-semibold mb-4 text-gray-700">{{ isset($editbill) ? "Update Request" : "Create Request" }}</h2>
 
-                <form action="{{ route('store.bills') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{isset($editbill) ? route('update.bill',$editbill->id) : route('store.bills') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <input type="hidden" name="uploaded_by" value="{{ Auth::guard('user')->user()->id }}">
                     <!-- Top Fields -->
@@ -65,7 +65,7 @@
                                 class="w-full mt-1 border rounded-lg p-2 focus:ring-2 focus:ring-blue-400">
                                 <option>Select PO</option>
                                 @foreach (orderItems() as $op)
-                                    <option value="{{ $op->id }}">{{ $op->po_number }}</option>
+                                    <option value="{{ $op->id }}" @selected(isset($editbill) ? $editbill->purchase_order_id == $op->id : "")>{{ $op->po_number }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -77,7 +77,7 @@
                                 class="w-full mt-1 border rounded-lg p-2 focus:ring-2 focus:ring-blue-400">
                                 <option>Select Vendor</option>
                                 @foreach (AllVendor() as $vender)
-                                    <option value="{{ $vender->id }}">{{ $vender->vendor_name }}</option>
+                                    <option value="{{ $vender->id }}" @selected(isset($editbill) ? $editbill->vendor_id == $vender->id : "")>{{ $vender->vendor_name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -86,41 +86,42 @@
                         <div>
                             <label class="text-sm text-gray-600">Bill No</label>
                             <input type="text" name="bill_no"
-                                class="w-full mt-1 border rounded-lg p-2 focus:ring-2 focus:ring-blue-400">
+                                class="w-full mt-1 border rounded-lg p-2 focus:ring-2 focus:ring-blue-400" value="{{ isset($editbill) ? $editbill->bill_no : "" }}">
                         </div>
 
                         <!-- Bill Date -->
                         <div>
                             <label class="text-sm text-gray-600">Bill Date</label>
                             <input type="date" name="bill_date"
-                                class="w-full mt-1 border rounded-lg p-2 focus:ring-2 focus:ring-blue-400">
+                                class="w-full mt-1 border rounded-lg p-2 focus:ring-2 focus:ring-blue-400" value="{{ isset($editbill) ? $editbill->bill_date : "" }}">
                         </div>
 
                         <!-- Bill Amount -->
                         <div>
                             <label class="text-sm text-gray-600">Bill Amount</label>
                             <input type="number" step="0.01" name="bill_amount" id="bill_amount"
-                                class="w-full mt-1 border rounded-lg p-2 focus:ring-2 focus:ring-blue-400">
+                                class="w-full mt-1 border rounded-lg p-2 focus:ring-2 focus:ring-blue-400"  value="{{ isset($editbill) ? $editbill->bill_amount : "" }}">
                         </div>
 
                         <!-- GST -->
                         <div>
                             <label class="text-sm text-gray-600">GST Amount</label>
                             <input type="number" step="0.01" name="gst_amount" id="gst_amount"
-                                class="w-full mt-1 border rounded-lg p-2 focus:ring-2 focus:ring-blue-400">
+                                class="w-full mt-1 border rounded-lg p-2 focus:ring-2 focus:ring-blue-400"  value="{{ isset($editbill) ? $editbill->gst_amount : "" }}">
                         </div>
 
                         <!-- Total -->
                         <div>
                             <label class="text-sm text-gray-600">Total Amount</label>
                             <input type="number" step="0.01" name="total_amount" id="total_amount" readonly
-                                class="w-full mt-1 border rounded-lg p-2">
+                                class="w-full mt-1 border rounded-lg p-2" value="{{ isset($editbill) ? $editbill->total_amount : "" }}">
                         </div>
 
                         <!-- File Upload -->
                         <div>
                             <label class="text-sm text-gray-600">Upload Bill</label>
                             <input type="file" name="bill_file" class="w-full mt-1 border rounded-lg p-2 bg-white">
+                            <img src="{{ isset($editbill) ?  asset($editbill->bill_file ?? "") : "" }}" alt="" class="w-20 mt-1">
                         </div>
 
                     </div>
@@ -129,7 +130,7 @@
                     <div class="mt-6 text-right">
                         <button
                             class="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-xl shadow">
-                            Submit Bill
+                          {{   isset($editbill) ? "Update Bill":"Submit Bill"}}
                         </button>
                     </div>
                 </form>
@@ -181,6 +182,14 @@
                                             Download
                                         </a>
                                     @endif
+                                    <a href="{{ route('edit.bill',$bill->id) }}"
+                                        class="text-xs px-3 py-1 bg-orange-500 text-white rounded-lg hover:bg-blue-600">
+                                        Edit
+                                    </a>
+                                    <a href="{{ route('delete.bill',$bill->id) }}" onclick="return confirm('Are you sure delete this data')"
+                                        class="text-xs px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-blue-600">
+                                        Delete
+                                    </a>
 
                                 </div>
 

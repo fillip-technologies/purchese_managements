@@ -192,56 +192,119 @@ class PurchesManageController extends Controller
         return view('users.purchese.upload_bill', compact('bills'));
     }
 
+    public function billedit($id)
+    {
+        $bills = PurchaseBill::orderBy('id', 'desc')->paginate(10);
+        $editbill = PurchaseBill::findOrFail($id);
+
+        return view('users.purchese.upload_bill', compact('bills', 'editbill'));
+    }
+
     public function storeBill(Request $request)
-{
-    $request->validate([
-        'purchase_order_id' => 'required',
-        'vendor_id' => 'required',
-        'bill_no' => 'required',
-        'bill_date' => 'required|date',
-        'bill_amount' => 'required|numeric',
-        'gst_amount' => 'nullable|numeric',
-        'bill_file' => 'nullable|file|mimes:pdf,jpg,png',
-    ]);
+    {
+        $request->validate([
+            'purchase_order_id' => 'required',
+            'vendor_id' => 'required',
+            'bill_no' => 'required',
+            'bill_date' => 'required|date',
+            'bill_amount' => 'required|numeric',
+            'gst_amount' => 'nullable|numeric',
+            'bill_file' => 'nullable|file|mimes:pdf,jpg,png',
+        ]);
 
-    $fileName = null;
+        $fileName = null;
 
-    if ($request->hasFile('bill_file')) {
-        $file = $request->file('bill_file');
-        $fileNameOnly = time() . '.' . $file->getClientOriginalExtension();
-        $uploadPath = public_path('bills');
+        if ($request->hasFile('bill_file')) {
+            $file = $request->file('bill_file');
+            $fileNameOnly = time().'.'.$file->getClientOriginalExtension();
+            $uploadPath = public_path('bills');
 
-        $file->move($uploadPath, $fileNameOnly);
+            $file->move($uploadPath, $fileNameOnly);
 
-        $fileName = 'bills/' . $fileNameOnly;
+            $fileName = 'bills/'.$fileNameOnly;
+        }
+
+        $billAmount = $request->bill_amount;
+        $gstPercent = $request->gst_amount ?? 0;
+
+        $gstValue = ($billAmount * $gstPercent) / 100;
+        $total = $billAmount + $gstValue;
+
+        PurchaseBill::create([
+            'purchase_order_id' => $request->purchase_order_id,
+            'vendor_id' => $request->vendor_id,
+            'bill_no' => $request->bill_no,
+            'uploaded_by' => $request->uploaded_by,
+            'bill_date' => $request->bill_date,
+            'bill_amount' => $billAmount,
+            'gst_amount' => $gstValue,
+            'total_amount' => $total,
+            'bill_file' => $fileName,
+        ]);
+
+        return back()->with('success', 'Bill Added Successfully');
     }
 
-    $billAmount = $request->bill_amount;
-    $gstPercent = $request->gst_amount ?? 0;
+    public function updateBill(Request $request, $id)
+    {
+        $request->validate([
+            'purchase_order_id' => 'required',
+            'vendor_id' => 'required',
+            'bill_no' => 'required',
+            'bill_date' => 'required|date',
+            'bill_amount' => 'required|numeric',
+            'gst_amount' => 'nullable|numeric',
+            'bill_file' => 'nullable|file|mimes:pdf,jpg,png',
+        ]);
 
-    $gstValue = ($billAmount * $gstPercent) / 100;
-    $total = $billAmount + $gstValue;
+        $data = PurchaseBill::findOrFail($id);
+        $fileName = $data->bill_file;
 
-    PurchaseBill::create([
-        'purchase_order_id' => $request->purchase_order_id,
-        'vendor_id' => $request->vendor_id,
-        'bill_no' => $request->bill_no,
-        'uploaded_by' => $request->uploaded_by,
-        'bill_date' => $request->bill_date,
-        'bill_amount' => $billAmount,
-        'gst_amount' => $gstValue,
-        'total_amount' => $total,
-        'bill_file' => $fileName,
-    ]);
+        if ($request->hasFile('bill_file')) {
 
-    return back()->with('success', 'Bill Added Successfully');
-}
+            if ($data->bill_file && file_exists(public_path($data->bill_file))) {
+                unlink(public_path($data->bill_file));
+            }
 
-    public function listingBill(){
-         $bills = PurchaseBill::with(['purchaseOrder','user','vendor'])->orderBy('id', 'desc')->paginate(10);
-         return view('admin.listings.bills_list',compact('bills'));
+            $file = $request->file('bill_file');
+            $fileNameOnly = time().'.'.$file->getClientOriginalExtension();
+            $file->move(public_path('bills'), $fileNameOnly);
+
+            $fileName = 'bills/'.$fileNameOnly;
+        }
+
+        $billAmount = $request->bill_amount;
+        $gstPercent = $request->gst_amount ?? 0;
+
+        $gstValue = ($billAmount * $gstPercent) / 100;
+        $total = $billAmount + $gstValue;
+
+        $data->update([
+            'purchase_order_id' => $request->purchase_order_id,
+            'vendor_id' => $request->vendor_id,
+            'bill_no' => $request->bill_no,
+            'uploaded_by' => $request->uploaded_by,
+            'bill_date' => $request->bill_date,
+            'bill_amount' => $billAmount,
+            'gst_percent' => $gstPercent,
+            'gst_amount' => $gstValue,
+            'total_amount' => $total,
+            'bill_file' => $fileName,
+        ]);
+
+        return back()->with('success', 'Bill Updated Successfully');
+    }
+
+    public function listingBill()
+    {
+        $bills = PurchaseBill::with(['purchaseOrder', 'user', 'vendor'])->orderBy('id', 'desc')->paginate(10);
+
+        return view('admin.listings.bills_list', compact('bills'));
 
     }
 
-
+    public function billdelete($id){
+        PurchaseBill::findOrFail($id)->delete();
+        return back()->with('success','Bill Deleted SuccessFully');
+    }
 }
