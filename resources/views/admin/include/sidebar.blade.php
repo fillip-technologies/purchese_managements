@@ -50,38 +50,28 @@
                     <i class="fas fa-layer-group mr-3 text-gray-400 group-open:text-blue-600"></i>
                     Vendors
                 </div>
-
                 <i class="fas fa-chevron-down text-xs text-gray-400 group-open:rotate-180 transition"></i>
             </summary>
 
             <div class="pl-10 mt-1 flex flex-col space-y-1 text-sm">
                 <a href="{{ route('add.vendor.product') }}" class="text-gray-500 hover:text-blue-600 transition">Add
                     Vendors Products</a>
-
             </div>
         </details>
         <div class="mx-3 mt-2">
             <a href="{{ route('list.requisition') }}"
                 class="flex items-center px-4 py-2.5 text-gray-700 rounded-xl hover:bg-blue-50 hover:text-blue-600">
                 <i class="fas fa-list mr-3 text-gray-400"></i>
-                 Requisition Lists
+                Requisition Lists
             </a>
         </div>
     @else
-        <details class="group mx-3 mt-4 mt-1">
-            <summary
-                class="flex items-center justify-between cursor-pointer px-4 py-2.5 text-gray-700 rounded-xl hover:bg-blue-50">
-
-                <div class="flex items-center">
-                    <i class="fas fa-layer-group mr-3 text-gray-400 group-open:text-blue-600"></i>
-                    Purchase Requisition
-                </div>
-
-                <i class="fas fa-chevron-down text-xs text-gray-400 group-open:rotate-180 transition"></i>
-            </summary>
-
-        </details>
-
-
+        <div class="mx-3 mt-2">
+            <a href="{{ route('index.purches') }}"
+                class="flex items-center px-4 py-2.5 text-gray-700 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition">
+                <i class="fas fa-cart-plus mr-3 text-gray-400"></i>
+                + Add Requisition
+            </a>
+        </div>
     @endif
 </nav>

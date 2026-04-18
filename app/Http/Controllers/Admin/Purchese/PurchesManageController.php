@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin\Purchese;
 use App\Http\Controllers\Controller;
 use App\Models\Client;
 use App\Models\Product;
+use App\Models\PurchaseOrder;
+use App\Models\PurchaseOrderItem;
 use App\Models\PurchaseRequisition;
 use App\Models\PurchaseRequisitionItem;
 use App\Models\User;
@@ -79,13 +81,10 @@ class PurchesManageController extends Controller
         }
     }
 
-    public function approve(Request $request, $id)
+    public function approve(Request $request)
     {
+        $id = trim($request->id);
         $pr = PurchaseRequisition::findOrFail($id);
-
-        if ($pr->status !== 'submitted') {
-            return back()->with('error', 'Only submitted requests can be updated');
-        }
 
         $request->validate([
             'status' => 'required|in:approved,rejected',
@@ -94,6 +93,48 @@ class PurchesManageController extends Controller
         $pr->update([
             'status' => $request->status,
         ]);
+
+        if ($request->status === 'approved') {
+
+            $po = PurchaseOrder::create([
+                'requisition_id' => $pr->id,
+                'po_number'=> generatePOnumber(),
+                'approved_by' => Auth::guard('admin')->user()->id,
+                'status' => 'approved',
+                'vendor_id' => $request->vendor_id,
+                'subtotal' => 0,
+                'client_id' => $pr->client_id,
+                'gst_amount' => 0,
+                'total_amount' => 0,
+            ]);
+
+            $items = PurchaseRequisitionItem::where('requisition_id', $pr->id)->get();
+
+            $subtotal = 0;
+
+            foreach ($items as $item) {
+
+                $lineTotal = $item->quantity * ($item->product->base_price ?? 0);
+                $subtotal += $lineTotal;
+
+                PurchaseOrderItem::create([
+                    'purchase_order_id' => $po->id,
+                    'product_id' => $item->product_id,
+                    'quantity' => $item->quantity,
+                    'price' => $item->product->base_price ?? 0,
+                    'total' => $lineTotal,
+                ]);
+            }
+
+            $gst = ($subtotal * 18) / 100;
+            $total = $subtotal + $gst;
+
+            $po->update([
+                'subtotal' => $subtotal,
+                'gst_amount' => $gst,
+                'total_amount' => $total,
+            ]);
+        }
 
         return back()->with('success', 'Request '.ucfirst($request->status));
     }
@@ -127,4 +168,6 @@ class PurchesManageController extends Controller
         return view('admin.listings.purchaselist', compact('data'));
 
     }
+
+    public function purchasepfd() {}
 }

@@ -153,16 +153,7 @@ if (! function_exists('purchase_total')) {
     }
 }
 
-if (! function_exists('req_no')) {
-    function req_no()
-    {
-        $alpha = range('A', 'Z');
-        $num = range(1,1000);
-        $randomLetter = $alpha[array_rand($alpha)];
-        $getnum = $num[array_rand($num)];
-        return date('d-m-Y').'-'.$randomLetter.$getnum;
-    }
-}
+
 
 if (! function_exists('payment_badge')) {
     function payment_badge($status)
