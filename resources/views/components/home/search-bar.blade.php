@@ -2,7 +2,7 @@
 
 
   <div class="flex border border-gray-300 rounded-lg px-3 py-2 items-center shadow-sm hover:shadow-md transition">
-    <form action="{{ route('shop') }}" method="GET" class="flex w-full items-center">
+    <form action="" method="GET" class="flex w-full items-center">
         <input
             id="searchInput"
             type="text"
