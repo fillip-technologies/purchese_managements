@@ -99,21 +99,21 @@
                         <!-- Bill Amount -->
                         <div>
                             <label class="text-sm text-gray-600">Bill Amount</label>
-                            <input type="number" step="0.01" name="bill_amount"
+                            <input type="number" step="0.01" name="bill_amount" id="bill_amount"
                                 class="w-full mt-1 border rounded-lg p-2 focus:ring-2 focus:ring-blue-400">
                         </div>
 
                         <!-- GST -->
                         <div>
                             <label class="text-sm text-gray-600">GST Amount</label>
-                            <input type="number" step="0.01" name="gst_amount"
+                            <input type="number" step="0.01" name="gst_amount" id="gst_amount"
                                 class="w-full mt-1 border rounded-lg p-2 focus:ring-2 focus:ring-blue-400">
                         </div>
 
                         <!-- Total -->
                         <div>
                             <label class="text-sm text-gray-600">Total Amount</label>
-                            <input type="number" step="0.01" name="total_amount"
+                            <input type="number" step="0.01" name="total_amount" id="total_amount" readonly
                                 class="w-full mt-1 border rounded-lg p-2">
                         </div>
 
@@ -205,4 +205,24 @@
 
         </div>
     </div>
+
+    <script>
+        $(document).ready(function() {
+
+            function calculateTotal() {
+                let bill_amount = parseFloat($("#bill_amount").val()) || 0;
+                let gst_percent = parseFloat($("#gst_amount").val()) || 0;
+
+                let gst_value = (bill_amount * gst_percent) / 100;
+                let total = bill_amount + gst_value;
+
+                $("#total_amount").val(total.toFixed(2));
+            }
+
+            $("#bill_amount, #gst_amount").on('keyup change', function() {
+                calculateTotal();
+            });
+
+        });
+    </script>
 @endsection

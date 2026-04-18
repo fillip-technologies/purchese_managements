@@ -56,7 +56,7 @@
             <!-- TABLE -->
             <div class="overflow-x-auto">
 
-                <table class="min-w-full text-sm">
+                <table class="w-full border border-gray-200 rounded-lg">
 
                     <thead class="bg-gray-50 text-gray-600 text-xs uppercase">
                         <tr>
@@ -146,6 +146,10 @@
                 </table>
 
             </div>
+
+
+
+
         </div>
     </div>
 
