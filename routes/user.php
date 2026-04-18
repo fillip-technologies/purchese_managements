@@ -12,9 +12,11 @@ Route::prefix('app/users')->middleware('user')->group(function () {
     Route::get('/logout', [UserManageController::class, 'Userlogout'])->name('user.logout');
     Route::get('/index/purchese', [PurchesManageController::class, 'indexPurcherReq'])->name('index.purches');
     Route::post('/store/purchese', [PurchesManageController::class, 'storeReq'])->name('store.purches');
-    Route::get('/billUpload/form',[PurchesManageController::class, 'billUpload'])->name('billUpload.index');
-    Route::get('/edit/bill/{id}',[PurchesManageController::class, 'billedit'])->name('edit.bill');
-    Route::get('/delete/bill/{id}',[PurchesManageController::class, 'billdelete'])->name('delete.bill');
-    Route::post('/update/bill/{id}',[PurchesManageController::class, 'updateBill'])->name('update.bill');
-     Route::post('/store/bills', [PurchesManageController::class, 'storeBill'])->name('store.bills');
+    Route::get('/billUpload/form', [PurchesManageController::class, 'billUpload'])->name('billUpload.index');
+    Route::get('/edit/bill/{id}', [PurchesManageController::class, 'billedit'])->name('edit.bill');
+    Route::get('/delete/bill/{id}', [PurchesManageController::class, 'billdelete'])->name('delete.bill');
+    Route::post('/update/bill/{id}', [PurchesManageController::class, 'updateBill'])->name('update.bill');
+    Route::post('/store/bills', [PurchesManageController::class, 'storeBill'])->name('store.bills');
+    Route::post('/store/dispatch', [PurchesManageController::class, 'Dispatchstore'])->name('store.dispatch');
+    Route::get('/dispatch/form', [PurchesManageController::class, 'indexDispatch'])->name('dispatch.index');
 });

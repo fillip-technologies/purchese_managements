@@ -99,5 +99,13 @@
                 + Upload Bills
             </a>
         </div>
+
+         <div class="mx-3 mt-2">
+            <a href="{{ route('dispatch.index') }}"
+                class="flex items-center px-4 py-2.5 text-gray-700 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition">
+              <i class="fas fa-truck mr-3 text-gray-400"></i>
+                + Add Dispatches
+            </a>
+        </div>
     @endif
 </nav>

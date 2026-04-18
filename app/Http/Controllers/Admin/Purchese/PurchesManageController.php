@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\Purchese;
 
 use App\Http\Controllers\Controller;
 use App\Models\Client;
+use App\Models\Dispatch;
 use App\Models\Product;
 use App\Models\PurchaseBill;
 use App\Models\PurchaseOrder;
@@ -303,8 +304,61 @@ class PurchesManageController extends Controller
 
     }
 
-    public function billdelete($id){
+    public function billdelete($id)
+    {
         PurchaseBill::findOrFail($id)->delete();
-        return back()->with('success','Bill Deleted SuccessFully');
+
+        return back()->with('success', 'Bill Deleted SuccessFully');
+    }
+
+    public function indexDispatch()
+    {
+        $dispatches = Dispatch::orderBy('id','desc')->paginate(10);
+        return view('users.dispatches.add_dispatch',compact('dispatches'));
+    }
+
+    public function Dispatchstore(Request $request)
+    {
+        // ✅ Validation
+        $request->validate([
+            'purchase_order_id' => 'required|exists:purchase_orders,id',
+            'dispatch_date' => 'required|date',
+            'transport_mode' => 'nullable|string|max:255',
+            'vehicle_no' => 'nullable|string|max:255',
+            'driver_name' => 'nullable|string|max:255',
+            'driver_phone' => 'nullable|string|max:20',
+            'from_location' => 'nullable|string|max:255',
+            'to_location' => 'nullable|string|max:255',
+            'transport_cost' => 'nullable|numeric',
+            'remarks' => 'nullable|string',
+            'dispatch_photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        ]);
+
+        try {
+            $fileName = null;
+            $data = $request->all();
+
+            if ($request->hasFile('dispatch_photo')) {
+                $file = $request->file('dispatch_photo');
+                $fileNameOnly = time().'.'.$file->getClientOriginalExtension();
+                $uploadPath = public_path('dispatchs');
+
+                $file->move($uploadPath, $fileNameOnly);
+
+                $fileName = 'dispatchs/'.$fileNameOnly;
+            }
+            $data['dispatch_photo'] = $fileName;
+            $data['created_by'] = $request->created_by;
+
+            Dispatch::create($data);
+
+            return redirect()->back()->with('success', 'Dispatch created successfully');
+
+        } catch (\Exception $e) {
+
+            return redirect()->back()
+                ->with('error', 'Something went wrong!')
+                ->withInput();
+        }
     }
 }
