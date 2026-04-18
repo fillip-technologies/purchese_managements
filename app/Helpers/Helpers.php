@@ -1,6 +1,9 @@
 <?php
 
+use App\Models\PurchaseOrder;
 use App\Models\Vendor;
+use Illuminate\Support\Facades\Auth;
+
 
 if (! function_exists('AllVendor')) {
 
@@ -35,5 +38,13 @@ if (!function_exists('generatePOnumber')) {
                     ->count();
         $number = str_pad($count + 1, 3, '0', STR_PAD_LEFT);
         return "{$prefix}-{$year}-{$month}-{$number}";
+    }
+}
+
+if(!function_exists('orderItems')){
+    function orderItems(){
+        // $user = Auth::guard('user')->user()->id;
+        $orders = PurchaseOrder::select('id','po_number')->orderBy('id','desc')->get();
+        return $orders;
     }
 }

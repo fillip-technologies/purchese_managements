@@ -181,6 +181,9 @@
                 <div class="space-y-3">
 
                     @foreach ($requests as $req)
+                    {{-- @php
+                        dd($req);
+                    @endphp --}}
                         <div class="p-3 border rounded-lg hover:shadow transition">
 
                             <div
@@ -202,13 +205,16 @@
                                 </span>
 
                                 <!-- Action -->
-                                <div class="flex items-center gap-2 @if($req->status != 'approved') hidden @endif">
+                                <div class="flex items-center gap-2 @if ($req->status != 'approved') hidden @endif">
 
                                     @if ($req->status === 'approved')
-                                        <a href=""
-                                            class="text-xs px-3 py-1 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">
-                                            Download
-                                        </a>
+                                        <form action="{{ route('pdf.item.list',$req->id) }}" method="GET">
+
+                                            <button type="submit"
+                                                class="text-xs px-3 py-1 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">
+                                                Download
+                                            </button>
+                                        </form>
                                     @endif
 
                                 </div>

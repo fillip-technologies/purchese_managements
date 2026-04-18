@@ -5,11 +5,13 @@ namespace App\Http\Controllers\Admin\Purchese;
 use App\Http\Controllers\Controller;
 use App\Models\Client;
 use App\Models\Product;
+use App\Models\PurchaseBill;
 use App\Models\PurchaseOrder;
 use App\Models\PurchaseOrderItem;
 use App\Models\PurchaseRequisition;
 use App\Models\PurchaseRequisitionItem;
 use App\Models\User;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -21,7 +23,7 @@ class PurchesManageController extends Controller
         $clients = Client::select('id', 'client_name')->get();
         $products = Product::select('id', 'product_name')->get();
         $users = User::select('id', 'full_name')->where('full_name', '!=', 'Admin')->get();
-        $requests = PurchaseRequisition::with(['client', 'user'])->where('requested_by', Auth::guard('user')->user()->id ?? Auth::guard('admin')->user()->id)
+        $requests = PurchaseRequisition::with(['client', 'user', 'items'])->where('requested_by', Auth::guard('user')->user()->id ?? Auth::guard('admin')->user()->id)
             ->orderBy('id', 'desc')
             ->paginate(10);
 
@@ -98,7 +100,7 @@ class PurchesManageController extends Controller
 
             $po = PurchaseOrder::create([
                 'requisition_id' => $pr->id,
-                'po_number'=> generatePOnumber(),
+                'po_number' => generatePOnumber(),
                 'approved_by' => Auth::guard('admin')->user()->id,
                 'status' => 'approved',
                 'vendor_id' => $request->vendor_id,
@@ -169,5 +171,69 @@ class PurchesManageController extends Controller
 
     }
 
-    public function purchasepfd() {}
+    public function purchasePdf($id)
+    {
+        $order = PurchaseOrder::with([
+            'requisition',
+            'vendor',
+            'client',
+            'items',
+            'approver',
+        ])->where('requisition_id', $id)->first();
+
+        return Pdf::loadView('users.purchese.order_list_items', compact('order'))
+            ->download('purchase_order_'.$order->po_number.'.pdf');
+    }
+
+    public function billUpload()
+    {
+        $bills = PurchaseBill::withorderBy('id', 'desc')->paginate(10);
+
+        return view('users.purchese.upload_bill', compact('bills'));
+    }
+
+    public function storeBill(Request $request)
+    {
+        $request->validate([
+            'purchase_order_id' => 'required',
+            'vendor_id' => 'required',
+            'bill_no' => 'required',
+            'bill_date' => 'required|date',
+            'bill_amount' => 'required|numeric',
+            'gst_amount' => 'nullable|numeric',
+            'total_amount' => 'required|numeric',
+            'bill_file' => 'nullable|file|mimes:pdf,jpg,png',
+        ]);
+
+        $fileName = null;
+
+        if ($request->hasFile('bill_file')) {
+            $file = $request->file('bill_file');
+            $filname = time().'.'.$file->getClientOriginalExtension();
+            $upload = public_path('bills');
+            $fileName = 'bills/'.$filname;
+            $file->move($upload, $filname);
+        }
+
+        PurchaseBill::create([
+            'purchase_order_id' => $request->purchase_order_id,
+            'vendor_id' => $request->vendor_id,
+            'bill_no' => $request->bill_no,
+            'uploaded_by' => $request->uploaded_by,
+            'bill_date' => $request->bill_date,
+            'bill_amount' => $request->bill_amount,
+            'gst_amount' => $request->gst_amount,
+            'total_amount' => $request->total_amount,
+            'bill_file' => $fileName,
+        ]);
+
+        return back()->with('success', 'Bill Added Successfully');
+    }
+
+    public function listingBill(){
+         $bills = PurchaseBill::with(['purchaseOrder','user','vendor'])->orderBy('id', 'desc')->paginate(10);
+        
+    }
+
+
 }

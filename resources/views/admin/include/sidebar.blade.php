@@ -58,12 +58,31 @@
                     Vendors Products</a>
             </div>
         </details>
+        <details class="group mx-3 mt-1">
+            <summary
+                class="flex items-center justify-between cursor-pointer px-4 py-2.5 text-gray-700 rounded-xl hover:bg-blue-50">
+
+                <div class="flex items-center">
+                    <i class="fas fa-layer-group mr-3 text-gray-400 group-open:text-blue-600"></i>
+                    Listings
+                </div>
+                <i class="fas fa-chevron-down text-xs text-gray-400 group-open:rotate-180 transition"></i>
+            </summary>
+
+            <div class="pl-10 mt-1 flex flex-col space-y-1 text-sm">
+                <a href="{{ route('list.requisition') }}" class="text-gray-500 hover:text-blue-600 transition">
+                    <i class="fas fa-list mr-3 text-gray-400"></i>
+                    Requisition Lists
+                </a>
+                <a href="{{ route('list.bills') }}" class="text-gray-500 hover:text-blue-600 transition">
+                    <i class="fas fa-list mr-3 text-gray-400"></i>
+                    Bill Lists
+                </a>
+
+            </div>
+        </details>
         <div class="mx-3 mt-2">
-            <a href="{{ route('list.requisition') }}"
-                class="flex items-center px-4 py-2.5 text-gray-700 rounded-xl hover:bg-blue-50 hover:text-blue-600">
-                <i class="fas fa-list mr-3 text-gray-400"></i>
-                Requisition Lists
-            </a>
+
         </div>
     @else
         <div class="mx-3 mt-2">
@@ -71,6 +90,13 @@
                 class="flex items-center px-4 py-2.5 text-gray-700 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition">
                 <i class="fas fa-cart-plus mr-3 text-gray-400"></i>
                 + Add Requisition
+            </a>
+        </div>
+        <div class="mx-3 mt-2">
+            <a href="{{ route('billUpload.index') }}"
+                class="flex items-center px-4 py-2.5 text-gray-700 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition">
+                <i class="fas fa-file-upload  mr-3 text-gray-400"></i>
+                + Upload Bills
             </a>
         </div>
     @endif
