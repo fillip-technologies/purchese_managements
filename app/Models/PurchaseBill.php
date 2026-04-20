@@ -14,7 +14,8 @@ class PurchaseBill extends Model
         'bill_amount',
         'gst_amount',
         'total_amount',
-        'bill_file'
+        'bill_file',
+        'uploaded_by'
     ];
 
     public function purchaseOrder()
@@ -25,5 +26,9 @@ class PurchaseBill extends Model
     public function vendor()
     {
         return $this->belongsTo(Vendor::class);
+    }
+
+    public function user(){
+        return $this->belongsTo(User::class,'uploaded_by');
     }
 }

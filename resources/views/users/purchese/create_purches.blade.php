@@ -132,7 +132,8 @@
                                             <select name="items[0][product_id]" class="w-full border rounded p-2">
                                                 <option>Select</option>
                                                 @foreach ($products as $product)
-                                                    <option value="{{ $product->id }}">{{ $product->product_name }}</option>
+                                                    <option value="{{ $product->id }}">{{ $product->product_name }}
+                                                    </option>
                                                 @endforeach
                                             </select>
                                         </td>
@@ -143,8 +144,7 @@
                                         </td>
 
                                         <td class="p-2">
-                                            <input type="text" name="items[0][unit]"
-                                                class="w-full border rounded p-2">
+                                            <input type="text" name="items[0][unit]" class="w-full border rounded p-2">
                                         </td>
 
                                         <td class="p-2">
@@ -181,18 +181,44 @@
                 <div class="space-y-3">
 
                     @foreach ($requests as $req)
+                    {{-- @php
+                        dd($req);
+                    @endphp --}}
                         <div class="p-3 border rounded-lg hover:shadow transition">
 
-                            <div class="flex justify-between">
-                                <span class="font-medium">{{ $req->req_no }}</span>
+                            <div
+                                class="flex items-center justify-between p-3 bg-white rounded-lg border hover:shadow-sm transition">
 
+                                <!-- Requisition No -->
+                                <span class="font-semibold text-gray-800">
+                                    {{ $req->req_no }}
+                                </span>
+
+                                <!-- Status -->
                                 <span
-                                    class="text-xs px-2 py-1 rounded
-                            @if ($req->status == 'approved') bg-green-100 text-green-600
-                            @elseif($req->status == 'rejected') bg-red-100 text-red-600
-                            @else bg-yellow-100 text-yellow-600 @endif">
+                                    class="text-xs px-3 py-1 rounded-full font-medium
+        @if ($req->status == 'approved') bg-green-100 text-green-700
+        @elseif($req->status == 'rejected') bg-red-100 text-red-700
+        @else bg-yellow-100 text-yellow-700 @endif">
+
                                     {{ ucfirst($req->status) }}
                                 </span>
+
+                                <!-- Action -->
+                                <div class="flex items-center gap-2 @if ($req->status != 'approved') hidden @endif">
+
+                                    @if ($req->status === 'approved')
+                                        <form action="{{ route('pdf.item.list',$req->id) }}" method="GET">
+
+                                            <button type="submit"
+                                                class="text-xs px-3 py-1 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">
+                                                Download
+                                            </button>
+                                        </form>
+                                    @endif
+
+                                </div>
+
                             </div>
 
                             <div class="text-xs text-gray-500 mt-1">

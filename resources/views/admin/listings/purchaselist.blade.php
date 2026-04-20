@@ -12,11 +12,51 @@
                 <input type="text" placeholder="Search..."
                     class="border rounded-lg px-3 py-2 text-sm w-full sm:w-64 focus:ring-2 focus:ring-blue-400">
             </div>
+            <!-- MODAL -->
+            <div id="actionModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center">
 
+                <div class="bg-white w-full max-w-md rounded-lg p-5 shadow-lg">
+
+                    <h2 class="text-lg font-semibold mb-4">Take Action</h2>
+
+                    <form method="POST" action="{{ route('approve.status') }}">
+                        @csrf
+
+                        <input type="hidden" name="id" id="req_id">
+
+                        <label class="block text-sm mb-1">Status</label>
+                        <select name="status" class="w-full border p-2 rounded mb-3">
+                            <option value="approved">Approve</option>
+                            <option value="rejected">Reject</option>
+                        </select>
+
+                        <label class="block text-sm mb-1">All Vendor</label>
+                        <select name="vendor_id" class="w-full border p-2 rounded mb-3">
+                            <option value="approved">Select Vendor</option>
+                            @foreach (AllVendor() as $vendor)
+                                <option value="{{ $vendor->id }}">{{ $vendor->vendor_name }}</option>
+                            @endforeach
+
+                        </select>
+
+                        <div class="flex justify-end gap-2">
+                            <button type="button" onclick="closeModal()" class="px-3 py-1 bg-gray-300 rounded">
+                                Cancel
+                            </button>
+
+                            <button type="submit" class="px-3 py-1 bg-blue-600 text-white rounded">
+                                Submit
+                            </button>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
             <!-- TABLE -->
             <div class="overflow-x-auto">
 
-                <table class="min-w-full text-sm">
+                <table class="w-full border border-gray-200 rounded-lg">
 
                     <thead class="bg-gray-50 text-gray-600 text-xs uppercase">
                         <tr>
@@ -81,37 +121,21 @@
         @else
             bg-gray-100 text-gray-600 @endif
     ">
-                                        {{ ucfirst($item['status'] ?? 'pending') }}
+
+
+
+                                        {{ ucfirst($item['status'] ?? 'draft') }}
+
                                     </span>
 
                                 </td>
 
-                                <!-- ACTION -->
+
                                 <td class="p-3 text-center">
-                                    <form action="{{ route('approve.status',$item['req_id']) }}" method="POST">
-                                        @csrf
-                                        <div class="flex items-center justify-center gap-2">
-                                            <select onchange="this.form.submit()" name="status"
-                                                class="text-xs border rounded-lg px-2 py-1 focus:ring-2 focus:ring-blue-400">
-                                                <option value="pending">Pending</option>
-                                                <option value="approved">Approved</option>
-                                                <option value="rejected">Rejected</option>
-                                            </select>
-
-                                            <!-- VIEW -->
-                                            {{-- <button class="px-2 py-1 text-xs bg-blue-500 text-white rounded-lg hover:bg-blue-600">
-                                        View
+                                    <button class="bg-blue-500 hover:bg-blue-600 text-white p-1 rounded"
+                                        onclick="openModal({{ $item['req_id'] }})">
+                                        Take Action
                                     </button>
-
-                                    <!-- DELETE -->
-                                    <button class="px-2 py-1 text-xs bg-red-500 text-white rounded-lg hover:bg-red-600">
-                                        Delete
-                                    </button> --}}
-
-                                        </div>
-                                    </form>
-
-
                                 </td>
 
                             </tr>
@@ -122,6 +146,24 @@
                 </table>
 
             </div>
+
+
+
+
         </div>
     </div>
+
+    <script>
+        function openModal(id) {
+            document.getElementById('actionModal').classList.remove('hidden');
+            document.getElementById('actionModal').classList.add('flex');
+
+            document.getElementById('req_id').value = id;
+        }
+
+        function closeModal() {
+            document.getElementById('actionModal').classList.add('hidden');
+            document.getElementById('actionModal').classList.remove('flex');
+        }
+    </script>
 @endsection

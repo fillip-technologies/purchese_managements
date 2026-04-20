@@ -1,5 +1,5 @@
 <nav class="mt-6 flex-1 overflow-y-auto scrollbar-thin" id="sidebarNav">
-    
+
     <!-- Navigation Heading -->
     <div class="px-5 mb-4 transition-colors duration-200">
         <p class="text-[11px] uppercase text-gray-400 dark:text-gray-500 font-semibold tracking-widest sidebar-text">Navigation</p>
@@ -8,9 +8,9 @@
     <!-- Dashboard Link -->
     <a href="{{ Auth::guard('admin')->user() ? url('/admin/dashboard') : route('user.dashboard') }}"
         class="sidebar-link flex items-center gap-3 mx-3 px-4 py-2.5 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-indigo-50 dark:hover:bg-indigo-900/30 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all duration-200 group relative">
-        
+
         <span class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-indigo-600 rounded-r opacity-0 group-hover:opacity-100 transition-all duration-200"></span>
-        
+
         <i class="fas fa-chart-line w-5 text-gray-400 dark:text-gray-500 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors"></i>
         <span class="sidebar-text">Dashboard</span>
     </a>
@@ -20,7 +20,7 @@
 
         <!-- Master Setup Dropdown -->
         <div class="dropdown-container mx-3 mb-1">
-            <button onclick="toggleDropdown(this)" 
+            <button onclick="toggleDropdown(this)"
                 class="dropdown-btn w-full flex items-center justify-between cursor-pointer px-4 py-2.5 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-all duration-200 group">
                 <div class="flex items-center gap-3">
                     <i class="fas fa-users w-5 text-gray-400 dark:text-gray-500 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors"></i>
@@ -50,52 +50,45 @@
 
         <!-- Vendors Dropdown -->
         <div class="dropdown-container mx-3 mb-1">
-            <button onclick="toggleDropdown(this)" 
+            <button onclick="toggleDropdown(this)"
                 class="dropdown-btn w-full flex items-center justify-between cursor-pointer px-4 py-2.5 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-all duration-200 group">
                 <div class="flex items-center gap-3">
                     <i class="fas fa-layer-group w-5 text-gray-400 dark:text-gray-500 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors"></i>
                     <span class="sidebar-text">Vendors</span>
                 </div>
-                <i class="dropdown-icon fas fa-chevron-down text-xs text-gray-400 dark:text-gray-500 transition-transform duration-200 sidebar-text"></i>
-            </button>
-            <div class="dropdown-menu hidden pl-11 mt-1 space-y-1">
-                <a href="{{ route('add.vendor.product') }}" class="flex items-center gap-2 py-2 text-sm text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
-                    <i class="fas fa-circle text-[6px]"></i>
-                    <span class="sidebar-text">Add Vendors Products</span>
-                </a>
-            </div>
-        </div>
 
-        <!-- Requisition Lists Link -->
+                <i class="fas fa-chevron-down text-xs text-gray-400 group-open:rotate-180 transition"></i>
+            </summary>
+
+            <div class="pl-10 mt-1 flex flex-col space-y-1 text-sm">
+                <a href="{{ route('add.vendor.product') }}" class="text-gray-500 hover:text-blue-600 transition">Add
+                    Vendors Products</a>
+
+            </div>
+        </details>
         <div class="mx-3 mt-2">
             <a href="{{ route('list.requisition') }}"
-                class="flex items-center gap-3 px-4 py-2.5 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-indigo-50 dark:hover:bg-indigo-900/30 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all duration-200 group">
-                <i class="fas fa-list w-5 text-gray-400 dark:text-gray-500 group-hover:text-indigo-600 dark:group-hover:text-indigo-400"></i>
-                <span class="sidebar-text">Requisition Lists</span>
+                class="flex items-center px-4 py-2.5 text-gray-700 rounded-xl hover:bg-blue-50 hover:text-blue-600">
+                <i class="fas fa-list mr-3 text-gray-400"></i>
+                 Requisition Lists
             </a>
         </div>
     @else
-        <!-- User Dropdown -->
-        <div class="dropdown-container mx-3 mt-4">
-            <button onclick="toggleDropdown(this)" 
-                class="dropdown-btn w-full flex items-center justify-between cursor-pointer px-4 py-2.5 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-all duration-200 group">
-                <div class="flex items-center gap-3">
-                    <i class="fas fa-layer-group w-5 text-gray-400 dark:text-gray-500 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors"></i>
-                    <span class="sidebar-text">Purchase Requisition</span>
+        <details class="group mx-3 mt-4 mt-1">
+            <summary
+                class="flex items-center justify-between cursor-pointer px-4 py-2.5 text-gray-700 rounded-xl hover:bg-blue-50">
+
+                <div class="flex items-center">
+                    <i class="fas fa-layer-group mr-3 text-gray-400 group-open:text-blue-600"></i>
+                    Purchase Requisition
                 </div>
-                <i class="dropdown-icon fas fa-chevron-down text-xs text-gray-400 dark:text-gray-500 transition-transform duration-200 sidebar-text"></i>
-            </button>
-            <div class="dropdown-menu hidden pl-11 mt-1 space-y-1">
-                <a href="#" class="flex items-center gap-2 py-2 text-sm text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
-                    <i class="fas fa-circle text-[6px]"></i>
-                    <span class="sidebar-text">My Requisitions</span>
-                </a>
-                <a href="#" class="flex items-center gap-2 py-2 text-sm text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
-                    <i class="fas fa-circle text-[6px]"></i>
-                    <span class="sidebar-text">New Requisition</span>
-                </a>
-            </div>
-        </div>
+
+                <i class="fas fa-chevron-down text-xs text-gray-400 group-open:rotate-180 transition"></i>
+            </summary>
+
+        </details>
+
+
     @endif
 </nav>
 
@@ -107,11 +100,11 @@ function toggleDropdown(button) {
     if (sidebar && sidebar.classList.contains('collapsed')) {
         return;
     }
-    
+
     const container = button.closest('.dropdown-container');
     const menu = container.querySelector('.dropdown-menu');
     const icon = button.querySelector('.dropdown-icon');
-    
+
     // Close other dropdowns
     document.querySelectorAll('.dropdown-container').forEach(cont => {
         if (cont !== container) {
@@ -123,13 +116,13 @@ function toggleDropdown(button) {
             }
         }
     });
-    
+
     // Toggle current dropdown
     menu.classList.toggle('hidden');
     if (icon) {
         icon.style.transform = menu.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
     }
-    
+
     // Save state to localStorage
     saveDropdownStates();
 }
@@ -151,7 +144,7 @@ function loadDropdownStates() {
     if (sidebar && sidebar.classList.contains('collapsed')) {
         return;
     }
-    
+
     const savedStates = localStorage.getItem('dropdownStates');
     if (savedStates) {
         const states = JSON.parse(savedStates);
@@ -335,11 +328,11 @@ if (sidebarElement) {
         position: fixed !important;
         z-index: 1000;
     }
-    
+
     .sidebar.mobile-open {
         transform: translateX(0);
     }
-    
+
     .main-content {
         margin-left: 0 !important;
     }
