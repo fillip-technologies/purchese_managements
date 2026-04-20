@@ -49,7 +49,7 @@
                                 class="w-full mt-1 px-4 py-3 pl-10 rounded-xl border bg-gray-50 focus:ring-2 focus:ring-blue-500 outline-none"
                                 placeholder="Enter email" required>
 
-                            <i class="fas fa-envelope absolute left-3 top-4 text-gray-400"></i>
+                            <i class="fas fa-envelope absolute left-3 top-5 text-gray-400"></i>
                         </div>
                     </div>
 
@@ -61,11 +61,11 @@
                                 class="w-full mt-1 px-4 py-3 pl-10 pr-10 rounded-xl border bg-gray-50 focus:ring-2 focus:ring-blue-500 outline-none"
                                 placeholder="Enter password" required>
 
-                            <i class="fas fa-lock absolute left-3 top-4 text-gray-400"></i>
+                            <i class="fas fa-lock absolute left-3 top-5 text-gray-400"></i>
 
                             <!-- Toggle -->
                             <button type="button" onclick="togglePassword()"
-                                class="absolute right-3 top-3 text-gray-400 hover:text-blue-600">
+                                class="absolute right-3 top-5 text-gray-400 hover:text-blue-600">
                                 <i id="eyeIcon" class="fas fa-eye"></i>
                             </button>
                         </div>
