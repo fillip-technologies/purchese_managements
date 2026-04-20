@@ -13,11 +13,16 @@ class Delivery extends Model
         'drop_point',
         'received_photo',
         'receipt_file',
-        'remarks'
+        'remarks',
+        'created_by'
     ];
 
     public function dispatch()
     {
         return $this->belongsTo(Dispatch::class);
+    }
+
+    public function user(){
+        return $this->belongsTo(User::class,'created_by');
     }
 }

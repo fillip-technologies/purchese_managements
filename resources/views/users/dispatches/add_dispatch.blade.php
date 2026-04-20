@@ -49,7 +49,8 @@
 
                 <h2 class="text-lg font-semibold mb-4 text-gray-700">Create Dispatch</h2>
 
-                <form action="{{ route('store.dispatch') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ isset($editdata) ? route('dispatch.update', $editdata->id) : route('store.dispatch') }}"
+                    method="POST" enctype="multipart/form-data">
                     @csrf
 
                     <input type="hidden" name="created_by" value="{{ Auth::guard('user')->user()->id ?? '' }}">
@@ -61,7 +62,7 @@
                             <select name="purchase_order_id" class="w-full border rounded p-2">
                                 <option value="">Select PO</option>
                                 @foreach (orderItems() as $po)
-                                    <option value="{{ $po->id }}"
+                                    <option value="{{ $po->id }}" @selected(isset($editdata) ? $editdata->purchase_order_id === $po->id : '')
                                         {{ old('purchase_order_id') == $po->id ? 'selected' : '' }}>
                                         {{ $po->po_number }}
                                     </option>
@@ -72,56 +73,64 @@
                         <!-- Date -->
                         <div>
                             <label class="text-sm">Dispatch Date</label>
-                            <input type="datetime-local" name="dispatch_date" value="{{ old('dispatch_date') }}"
+                            <input type="datetime-local" name="dispatch_date"
+                                value="{{ old('dispatch_date', isset($editdata) ? $editdata->dispatch_date : '') }}"
                                 class="w-full border rounded p-2">
                         </div>
 
                         <!-- Mode -->
                         <div>
                             <label class="text-sm">Transport Mode</label>
-                            <input type="text" name="transport_mode" value="{{ old('transport_mode') }}"
+                            <input type="text" name="transport_mode"
+                                value="{{ old('transport_mode', isset($editdata) ? $editdata->transport_mode : '') }}"
                                 class="w-full border rounded p-2">
                         </div>
 
                         <!-- Vehicle -->
                         <div>
                             <label class="text-sm">Vehicle No</label>
-                            <input type="text" name="vehicle_no" value="{{ old('vehicle_no') }}"
+                            <input type="text" name="vehicle_no"
+                                value="{{ old('vehicle_no', isset($editdata) ? $editdata->vehicle_no : '') }}"
                                 class="w-full border rounded p-2">
                         </div>
 
                         <!-- Driver -->
                         <div>
                             <label class="text-sm">Driver Name</label>
-                            <input type="text" name="driver_name" value="{{ old('driver_name') }}"
+                            <input type="text" name="driver_name"
+                                value="{{ old('driver_name', isset($editdata) ? $editdata->driver_name : '') }}"
                                 class="w-full border rounded p-2">
                         </div>
 
                         <!-- Phone -->
                         <div>
                             <label class="text-sm">Driver Phone</label>
-                            <input type="text" name="driver_phone" value="{{ old('driver_phone') }}"
+                            <input type="text" name="driver_phone"
+                                value="{{ old('driver_phone', isset($editdata) ? $editdata->driver_phone : '') }}"
                                 class="w-full border rounded p-2">
                         </div>
 
                         <!-- From -->
                         <div>
                             <label class="text-sm">From Location</label>
-                            <input type="text" name="from_location" value="{{ old('from_location') }}"
+                            <input type="text" name="from_location"
+                                value="{{ old('from_location', isset($editdata) ? $editdata->from_location : '') }}"
                                 class="w-full border rounded p-2">
                         </div>
 
                         <!-- To -->
                         <div>
                             <label class="text-sm">To Location</label>
-                            <input type="text" name="to_location" value="{{ old('to_location') }}"
+                            <input type="text" name="to_location"
+                                value="{{ old('to_location', isset($editdata) ? $editdata->to_location : '') }}"
                                 class="w-full border rounded p-2">
                         </div>
 
                         <!-- Cost -->
                         <div>
                             <label class="text-sm">Transport Cost</label>
-                            <input type="number" step="0.01" name="transport_cost" value="{{ old('transport_cost') }}"
+                            <input type="number" step="0.01" name="transport_cost"
+                                value="{{ old('transport_cost', isset($editdata) ? $editdata->transport_cost : '') }}"
                                 class="w-full border rounded p-2">
                         </div>
 
@@ -129,19 +138,31 @@
                         <div>
                             <label class="text-sm">Dispatch Photo</label>
                             <input type="file" name="dispatch_photo" class="w-full border rounded p-2">
+                            <div>
+                                <img src="{{ asset(isset($editdata) ? $editdata->dispatch_photo : '') }}" alt=""
+                                    width="100px">
+                            </div>
                         </div>
 
                         <!-- Remarks -->
                         <div class="col-span-2">
                             <label class="text-sm">Remarks</label>
-                            <textarea name="remarks" rows="3" class="w-full border rounded p-2">{{ old('remarks') }}</textarea>
+                            <textarea name="remarks" rows="3" class="w-full border rounded p-2">{{ old('remarks', isset($editdata) ? $editdata->remarks : '') }}</textarea>
                         </div>
 
                     </div>
 
-                    <button type="submit" class="mt-4 bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700">
-                        Save Dispatch
-                    </button>
+                    <div class="text-end">
+                        <button type="submit" class="mt-4 bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700">
+                            {{ !empty($editdata) ? 'Updated' : 'Save' }}
+                        </button>
+                        @if (!empty($editdata))
+                            <a href="{{ route('dispatch.index') }}"
+                                class="mt-4 bg-gray-500 text-white px-5 py-2 rounded-lg hover:bg-gray-700">
+                                Back
+                            </a>
+                        @endif
+                    </div>
                 </form>
             </div>
 
@@ -165,8 +186,8 @@
                                     {{ $dispatch->from_location }} → {{ $dispatch->to_location }}
                                 </div>
 
-                                <div class="text-xs text-gray-400 mt-1">
-                                    {{ $dispatch->transport_mode }} | {{ $dispatch->vehicle_no }}
+                                <div class="text-xs mt-1">
+                                    {{ $dispatch->transport_mode }} | {{ $dispatch->vehicle_no }} |  <span><a href="" class="text-blue-500 :hover">View</a></span>
                                 </div>
                             </div>
 
@@ -180,17 +201,18 @@
                                 <div class="flex gap-2 justify-end">
 
                                     <!-- ✏️ Edit -->
-                                    <a href=""
+                                    <a href="{{ route('edit.dispatche', $dispatch->id) }}"
                                         class="text-xs px-3 py-1 bg-yellow-400 text-white rounded hover:bg-yellow-500">
                                         Edit
                                     </a>
 
                                     <!-- 🗑 Delete -->
-                                    <form action="" method="POST"
+                                    <form action="{{ route('delete.dispatch', $dispatch->id) }}" method="POST"
                                         onsubmit="return confirm('Are you sure to delete?')">
+                                        <input type="hidden" name="created_by"
+                                            value="{{ Auth::guard('user')->user()->id ?? '' }}">
                                         @csrf
                                         @method('DELETE')
-
                                         <button type="submit"
                                             class="text-xs px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">
                                             Delete

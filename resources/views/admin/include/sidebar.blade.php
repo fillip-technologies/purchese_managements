@@ -78,6 +78,14 @@
                     <i class="fas fa-list mr-3 text-gray-400"></i>
                     Bill Lists
                 </a>
+                <a href="{{ route('list.delivery') }}" class="text-gray-500 hover:text-blue-600 transition">
+                    <i class="fas fa-list mr-3 text-gray-400"></i>
+                    Delivery Lists
+                </a>
+                <a href="{{ route('list.dispatch') }}" class="text-gray-500 hover:text-blue-600 transition">
+                    <i class="fas fa-list mr-3 text-gray-400"></i>
+                    Dispatch Lists
+                </a>
 
             </div>
         </details>
@@ -105,6 +113,13 @@
                 class="flex items-center px-4 py-2.5 text-gray-700 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition">
               <i class="fas fa-truck mr-3 text-gray-400"></i>
                 + Add Dispatches
+            </a>
+        </div>
+        <div class="mx-3 mt-2">
+            <a href="{{ route('add.delivery') }}"
+                class="flex items-center px-4 py-2.5 text-gray-700 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition">
+              <i class="fas fa-file-signature mr-3 text-gray-400"></i>
+                + Add Delivery
             </a>
         </div>
     @endif

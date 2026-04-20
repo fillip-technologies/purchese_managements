@@ -12,6 +12,8 @@ Route::prefix('admin')->middleware('admin')->group(function () {
     Route::get('/list/requisition', [PurchesManageController::class, 'listRequisition'])->name('list.requisition');
     Route::get('/list/bills', [PurchesManageController::class, 'listingBill'])->name('list.bills');
     Route::post('/approve/requisition', [PurchesManageController::class, 'approve'])->name('approve.status');
+    Route::get('/list/delivery',[PurchesManageController::class,'deliverylist'])->name('list.delivery');
+     Route::get('/list/dispatch',[PurchesManageController::class,'dsplist'])->name('list.dispatch');
     Route::get('dashboard', function () {
         return view('admin.dashboard');
     })->name('dashboard');

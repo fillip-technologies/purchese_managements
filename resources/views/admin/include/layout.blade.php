@@ -97,7 +97,7 @@
 
                 <div class="flex items-center gap-2">
                     <div class="w-8 h-8 bg-gray-200 rounded-full"></div>
-                    <span class="text-sm text-gray-600">Admin</span>
+                    <span class="text-sm text-gray-600">{{ Auth::guard('admin')->user() ? Auth::guard('admin')->user()->full_name  : Auth::guard('user')->user()->full_name }}</span>
                 </div>
             </div>
         </header>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\Purchese;
 
 use App\Http\Controllers\Controller;
 use App\Models\Client;
+use App\Models\Delivery;
 use App\Models\Dispatch;
 use App\Models\Product;
 use App\Models\PurchaseBill;
@@ -313,8 +314,9 @@ class PurchesManageController extends Controller
 
     public function indexDispatch()
     {
-        $dispatches = Dispatch::orderBy('id','desc')->paginate(10);
-        return view('users.dispatches.add_dispatch',compact('dispatches'));
+        $dispatches = Dispatch::orderBy('id', 'desc')->paginate(10);
+
+        return view('users.dispatches.add_dispatch', compact('dispatches'));
     }
 
     public function Dispatchstore(Request $request)
@@ -360,5 +362,239 @@ class PurchesManageController extends Controller
                 ->with('error', 'Something went wrong!')
                 ->withInput();
         }
+    }
+
+    public function deletedispatch($id)
+    {
+        try {
+            $id = trim($id);
+            Dispatch::findOrFail($id)->delete();
+
+            return redirect()->back()->with('success', 'Dispatch delete successfully');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Something Went Worng', $e->getMessage());
+        }
+    }
+
+    public function editdispatch($id)
+    {
+        try {
+            $id = trim($id);
+            $editdata = Dispatch::findOrFail($id);
+            $dispatches = Dispatch::orderBy('id', 'desc')->paginate(10);
+
+            return view('users.dispatches.add_dispatch', compact('dispatches', 'editdata'));
+        } catch (\Exception $e) {
+            return back()->with('error', 'Something Went Worng', $e->getMessage());
+        }
+    }
+
+    public function updatedispach(Request $request, $id)
+    {
+        $request->validate([
+            'purchase_order_id' => 'required|exists:purchase_orders,id',
+            'dispatch_date' => 'required|date',
+            'transport_mode' => 'nullable|string|max:255',
+            'vehicle_no' => 'nullable|string|max:255',
+            'driver_name' => 'nullable|string|max:255',
+            'driver_phone' => 'nullable|string|max:20',
+            'from_location' => 'nullable|string|max:255',
+            'to_location' => 'nullable|string|max:255',
+            'transport_cost' => 'nullable|numeric',
+            'remarks' => 'nullable|string',
+            'dispatch_photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        ]);
+
+        $editdata = Dispatch::findOrFail($id);
+
+        try {
+            $fileName = $editdata->dispatch_photo;
+            $data = $request->all();
+
+            if ($request->hasFile('dispatch_photo')) {
+
+                if ($editdata->dispatch_photo && file_exists(public_path($editdata->dispatch_photo))) {
+                    unlink(public_path($editdata->dispatch_photo));
+                }
+                $file = $request->file('dispatch_photo');
+                $fileNameOnly = time().'.'.$file->getClientOriginalExtension();
+                $uploadPath = public_path('dispatchs');
+
+                $file->move($uploadPath, $fileNameOnly);
+
+                $fileName = 'dispatchs/'.$fileNameOnly;
+            }
+            $data['dispatch_photo'] = $fileName;
+            $data['created_by'] = $request->created_by;
+
+            $editdata->update($data);
+
+            return redirect()->back()->with('success', 'Dispatch updated successfully');
+
+        } catch (\Exception $e) {
+
+            return redirect()->back()
+                ->with('error', 'Something went wrong!')
+                ->withInput();
+        }
+    }
+
+    public function add_Delivery()
+    {
+        $deliveries = Delivery::where('created_by', Auth::guard('user')->user()->id ?? '')->paginate(2);
+
+        return view('users.dileverys.adddelivery', compact('deliveries'));
+    }
+
+    public function store_Delivery(Request $request)
+    {
+        $request->validate([
+            'dispatch_id' => 'required|exists:dispatches,id',
+            'received_by_name' => 'nullable|string|max:255',
+            'received_date' => 'required|date',
+            'drop_point' => 'nullable|string|max:255',
+            'received_photo' => 'nullable|file',
+            'receipt_file' => 'nullable|file',
+            'remarks' => 'nullable|string',
+        ]);
+
+        try {
+            $receivedPhotoPath = null;
+            $receiptFilePath = null;
+            $uploadPath = public_path('deliveries');
+
+            if (! file_exists($uploadPath)) {
+                mkdir($uploadPath, 0755, true);
+            }
+
+            if ($request->hasFile('received_photo')) {
+                $photo = $request->file('received_photo');
+                $photoName = time().'_received_photo.'.$photo->getClientOriginalExtension();
+                $photo->move($uploadPath, $photoName);
+                $receivedPhotoPath = 'deliveries/'.$photoName;
+            }
+
+            if ($request->hasFile('receipt_file')) {
+                $receiptFile = $request->file('receipt_file');
+                $receiptName = time().'_receipt.'.$receiptFile->getClientOriginalExtension();
+                $receiptFile->move($uploadPath, $receiptName);
+                $receiptFilePath = 'deliveries/'.$receiptName;
+            }
+
+            Delivery::create([
+                'dispatch_id' => $request->dispatch_id,
+                'received_by_name' => $request->received_by_name,
+                'received_date' => $request->received_date,
+                'drop_point' => $request->drop_point,
+                'created_by' => $request->created_by,
+                'received_photo' => $receivedPhotoPath,
+                'receipt_file' => $receiptFilePath,
+                'remarks' => $request->remarks,
+            ]);
+
+            return redirect()->back()->with('success', 'Delivery created successfully');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Something went wrong!')
+                ->withInput();
+        }
+    }
+
+    public function update_Delivery(Request $request, $id)
+    {
+        $request->validate([
+            'dispatch_id' => 'required|exists:dispatches,id',
+            'received_by_name' => 'nullable|string|max:255',
+            'received_date' => 'required|date',
+            'drop_point' => 'nullable|string|max:255',
+            'received_photo' => 'nullable|file',
+            'receipt_file' => 'nullable|file',
+            'remarks' => 'nullable|string',
+        ]);
+
+        $editdata = Delivery::findOrFail($id);
+
+        try {
+            $receivedPhotoPath = $editdata->received_photo;
+            $receiptFilePath = $editdata->receipt_file;
+            $uploadPath = public_path('deliveries');
+
+            if (! file_exists($uploadPath)) {
+                mkdir($uploadPath, 0755, true);
+            }
+
+            if ($request->hasFile('received_photo')) {
+
+                if ($editdata->received_photo && file_exists(public_path($editdata->received_photo))) {
+                    unlink(public_path($editdata->received_photo));
+                }
+
+                $photo = $request->file('received_photo');
+                $photoName = time().'_received_photo.'.$photo->getClientOriginalExtension();
+                $photo->move($uploadPath, $photoName);
+                $receivedPhotoPath = 'deliveries/'.$photoName;
+            }
+
+            if ($request->hasFile('receipt_file')) {
+
+                if ($editdata->receipt_file && file_exists(public_path($editdata->receipt_file))) {
+                    unlink(public_path($editdata->receipt_file));
+                }
+
+                $receiptFile = $request->file('receipt_file');
+                $receiptName = time().'_receipt.'.$receiptFile->getClientOriginalExtension();
+                $receiptFile->move($uploadPath, $receiptName);
+                $receiptFilePath = 'deliveries/'.$receiptName;
+            }
+
+            $editdata->update([
+                'dispatch_id' => $request->dispatch_id,
+                'received_by_name' => $request->received_by_name,
+                'received_date' => $request->received_date,
+                'created_by' => $request->created_by,
+                'drop_point' => $request->drop_point,
+                'received_photo' => $receivedPhotoPath,
+                'receipt_file' => $receiptFilePath,
+                'remarks' => $request->remarks,
+            ]);
+
+            return back()->with('success', 'Updated Delivery Data');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Something went wrong!')
+                ->withInput();
+        }
+    }
+
+    public function edit_Delivery($id)
+    {
+
+        try {
+
+            $editdata = Delivery::findOrFail($id);
+            $deliveries = Delivery::where('created_by', Auth::guard('user')->user()->id ?? '')->paginate(2);
+
+            return view('users.dileverys.adddelivery', compact('deliveries', 'editdata'));
+        } catch (\Exception $e) {
+            return back()->with('error', 'Something Went Worng', $e->getMessage());
+        }
+    }
+
+    public function deletedelivery($id)
+    {
+        Delivery::findOrFail($id)->delete();
+        return back()->with('success', 'Delivery delete successfully');
+
+    }
+
+    public function dsplist() {
+        $data = Dispatch::paginate(10);
+        return view('admin.listings.dispatchlist',compact('data'));
+    }
+
+    public function deliverylist()
+    {
+        $data = Delivery::with(['dispatch', 'user'])->orderBy('id', 'desc')->get();
+        return view('admin.listings.deliverylist', compact('data'));
     }
 }
