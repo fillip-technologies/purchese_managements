@@ -3,6 +3,10 @@
 use App\Http\Controllers\Admin\Purchese\PurchesManageController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\VendorController;
+use App\Http\Controllers\Admin\ClientController;
+
+
 
 
 Route::prefix('admin')->middleware('admin')->group(function () {
@@ -20,6 +24,9 @@ Route::prefix('admin')->middleware('admin')->group(function () {
     Route::get('/settings', function () {
         return 'Admin settings page';
     })->name('settings');
+
+    Route::resource('vendors', VendorController::class);
+    Route::resource('clients', ClientController::class);
 
 });
 

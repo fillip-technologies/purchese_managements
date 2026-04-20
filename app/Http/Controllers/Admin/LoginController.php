@@ -22,6 +22,7 @@ class LoginController extends Controller
         $request->session()->regenerate();
 
         $loginUser = Auth::guard('admin')->user();
+        // dd($loginUser);
 
         if (optional($loginUser->role)->role === 'admin') {
             return redirect()->route('dashboard');

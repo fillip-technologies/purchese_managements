@@ -2,63 +2,63 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Vendor;
 use Illuminate\Http\Request;
 
 class VendorController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $vendors = Vendor::latest()->paginate(10);
+        return view('admin.vendors.index', compact('vendors'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        return view('admin.vendors.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'vendor_name' => 'required',
+            'phone'       => 'required',
+        ]);
+
+        Vendor::create($request->all());
+
+        return redirect()->route('vendors.index')
+            ->with('success','Vendor Added Successfully');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show(Vendor $vendor)
     {
-        //
+        return view('admin.vendors.show', compact('vendor'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function edit(Vendor $vendor)
     {
-        //
+        return view('admin.vendors.edit', compact('vendor'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Vendor $vendor)
     {
-        //
+        $request->validate([
+            'vendor_name' => 'required',
+            'phone'       => 'required',
+        ]);
+
+        $vendor->update($request->all());
+
+        return redirect()->route('vendors.index')
+            ->with('success','Vendor Updated Successfully');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy(Vendor $vendor)
     {
-        //
+        $vendor->delete();
+
+        return redirect()->route('vendors.index')
+            ->with('success','Vendor Deleted Successfully');
     }
 }

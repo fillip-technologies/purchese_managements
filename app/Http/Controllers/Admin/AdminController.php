@@ -12,6 +12,7 @@ class AdminController extends Controller
 {
     public function login_admin()
     {
+        // dd(Hash::make('admin123'));
         return view('admin.login.signin');
     }
     public function logout()
