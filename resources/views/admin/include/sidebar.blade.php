@@ -16,6 +16,13 @@
 
     @if (Auth::guard('admin')->user())
         <div class="mx-4 my-3 border-t border-gray-100"></div>
+         <div class="mx-3 mt-2">
+            <a href="{{ route('master.index') }}"
+                class="flex items-center px-4 py-2.5 text-gray-700 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition">
+                <i class="fas fa-file-upload  mr-3 text-gray-400"></i>
+                + All Imports
+            </a>
+        </div>
 
         <details class="group mx-3">
             <summary

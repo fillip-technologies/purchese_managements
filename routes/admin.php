@@ -5,8 +5,7 @@ use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\VendorController;
 use App\Http\Controllers\Admin\ClientController;
-
-
+use App\Http\Controllers\Admin\MasterImportController;
 
 Route::prefix('admin')->middleware('admin')->group(function () {
     Route::get('/add/vendors', [HomeController::class, 'vendors'])->name('add.vendors');
@@ -18,6 +17,8 @@ Route::prefix('admin')->middleware('admin')->group(function () {
     Route::post('/approve/requisition', [PurchesManageController::class, 'approve'])->name('approve.status');
     Route::get('/list/delivery',[PurchesManageController::class,'deliverylist'])->name('list.delivery');
      Route::get('/list/dispatch',[PurchesManageController::class,'dsplist'])->name('list.dispatch');
+     Route::get('/all/import',[MasterImportController::class,'index'])->name('master.index');
+      Route::post('/all/data/import',[MasterImportController::class,'allimport'])->name('data.imports');
     Route::get('dashboard', function () {
         return view('admin.dashboard');
     })->name('dashboard');
@@ -27,6 +28,7 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         return 'Admin settings page';
     })->name('settings');
 
+    Route::get('profile',[HomeController::class, 'profile'])->name('admin.profile');
     Route::resource('vendors', VendorController::class);
     Route::resource('clients', ClientController::class);
 

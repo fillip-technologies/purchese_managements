@@ -63,8 +63,8 @@
                             <span class="text-gray-600">Remember me</span>
                         </label>
 
-                        <a href="#" class="text-indigo-600 hover:underline font-medium">
-                            Forgot?
+                        <a href="{{ route('forgot.password') }}" class="text-indigo-600 hover:underline font-medium">
+                            Forgot Password?
                         </a>
                     </div>
 

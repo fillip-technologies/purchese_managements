@@ -68,3 +68,16 @@ if (! function_exists('dipsachdata')) {
         return $data;
     }
 }
+
+if (! function_exists('MasterSection')) {
+    function MasterSection()
+    {
+        return [
+            'user' => 'Import Users',
+            'vendor' => 'Import Vendors',
+            'product' => 'Import Products',
+            'vender_product' => 'Import Vendor Product',
+            'client' => 'Import Clients',
+        ];
+    }
+}
