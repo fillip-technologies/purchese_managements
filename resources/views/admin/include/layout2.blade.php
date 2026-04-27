@@ -71,7 +71,6 @@
 
     <div class="flex h-screen overflow-hidden">
 
-        <!-- ========== SIDEBAR ========== -->
         <aside id="sidebar"
                class="sidebar-transition fixed inset-y-0 left-0 z-30 w-64 bg-gradient-to-b from-gray-800 to-gray-900 text-white shadow-xl lg:relative lg:translate-x-0
                       -translate-x-full">
@@ -94,7 +93,6 @@
                     <span>Dashboard</span>
                 </a>
 
-                <!-- Dropdown Example in Sidebar (Nested) -->
                 <div x-data="{ open: false }" class="relative">
                     <button @click="open = !open" class="w-full flex items-center justify-between px-4 py-2.5 text-gray-300 rounded-lg hover:bg-gray-700 hover:text-white transition duration-200 group">
                         <div class="flex items-center">

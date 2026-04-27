@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Auth;
+
 class HomeController extends Controller
 {
     public function users()
@@ -32,5 +34,12 @@ class HomeController extends Controller
     public function admin_login()
     {
         return view('admin.login.signin');
+    }
+
+    public function admin_profile()
+    {
+        $user = Auth::guard('admin')->user() ?? null;
+
+        return view('admin.profile.profile', compact('user'));
     }
 }
